@@ -10,35 +10,35 @@ from torch.utils.tensorboard import SummaryWriter
 
 from replay_buffer import ReplayBuffer
 from base_env import GazeboEnv
+import rl_utils
 
-
-def evaluate(network, epoch, eval_episodes=10):
-    avg_reward = 0.0
-    col = 0
-    success = 0
-    for _ in range(eval_episodes):
-        count = 0
-        state = env.reset()
-        done = False
-        while not done and count < 501:
-            action = network.get_action(np.array(state))
-            a_in = [(action[0] + 1) / 2, action[1]]
-            state, reward, done, _ = env.step(a_in)
-            avg_reward += reward
-            count += 1
-            if reward < -90:
-                col += 1
-            if reward > 90:
-                success += 1
-    avg_reward /= eval_episodes
-    avg_col = col / eval_episodes
-    avg_succ = success / eval_episodes
-    print("..............................................")
-    print(
-        "Average Reward over %i Evaluation Episodes, Epoch %i: avg_reward:%f, avg_collision%f, avg_Success: %d"
-        % (eval_episodes, epoch, avg_reward, avg_col,avg_succ)
-    )
-    return avg_reward
+# def evaluate(network, epoch, eval_episodes=10):
+#     avg_reward = 0.0
+#     col = 0
+#     success = 0
+#     for _ in range(eval_episodes):
+#         count = 0
+#         state = env.reset()
+#         done = False
+#         while not done and count < 501:
+#             action = network.get_action(np.array(state))
+#             a_in = [(action[0] + 1) / 2, action[1]]
+#             state, reward, done, _ = env.step(a_in)
+#             avg_reward += reward
+#             count += 1
+#             if reward < -90:
+#                 col += 1
+#             if reward > 90:
+#                 success += 1
+#     avg_reward /= eval_episodes
+#     avg_col = col / eval_episodes
+#     avg_succ = success / eval_episodes
+#     print("..............................................")
+#     print(
+#         "Average Reward over %i Evaluation Episodes, Epoch %i: avg_reward:%f, avg_collision%f, avg_Success: %d"
+#         % (eval_episodes, epoch, avg_reward, avg_col,avg_succ)
+#     )
+#     return avg_reward
 
 
 class Actor(nn.Module):
@@ -361,7 +361,7 @@ while timestep < max_timesteps:
     timesteps_since_eval += 1
 
 # After the training is done, evaluate the network and save it
-evaluations.append(evaluate(network=network, epoch=epoch, eval_episodes=eval_ep))
+evaluations.append(rl_utils.evaluate(network=network, epoch=epoch, eval_episodes=eval_ep))
 if save_model:
     network.save("%s" % file_name, directory="./pytorch_models")
 np.save("./results/%s" % file_name, evaluations)

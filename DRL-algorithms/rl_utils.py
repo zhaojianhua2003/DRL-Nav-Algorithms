@@ -5,7 +5,7 @@ import collections
 import random
 
 
-def evaluate(env,agent, iteration, max_steps,eval_episodes=10):
+def evaluate(env,agent, iteration, max_steps=500,eval_episodes=10):
     avg_reward = 0.0
     col = 0
     success = 0
@@ -26,11 +26,11 @@ def evaluate(env,agent, iteration, max_steps,eval_episodes=10):
             if reward > 90:
                 success += 1
     avg_reward /= eval_episodes
-    avg_col = col / eval_episodes
-    avg_succ = success / eval_episodes
+    avg_col = col / eval_episodes*100
+    avg_succ = success / eval_episodes*100
     
     print(
-        "Average Reward over %i Evaluation Episodes, Epoch %i: avg_reward:%f, avg_collision%f, avg_Success: %d"
+        "Average Reward over %i Evaluation Episodes, Epoch %i: avg_reward:%f, avg_collision: %d%% ,avg_Success: %d%%"
         % (eval_episodes, iteration, avg_reward, avg_col,avg_succ)
     )
     return avg_reward
@@ -50,7 +50,7 @@ def train_on_policy_agent(env, agent, iter_episodes,max_steps,iterations):
     return_list = []
     evaluations=[]
     for i in range(iterations):
-        with tqdm(total=iter_episodes, desc='Iteration %d' % i) as pbar:
+        with tqdm(total=iter_episodes, desc='Iteration %d' % (i+1)) as pbar:
             for i_episode in range(iter_episodes):
                 episode_return = 0
                 transition_dict = {'states': [], 'actions': [], 'next_states': [], 'rewards': [], 'dones': []}
@@ -112,12 +112,12 @@ def train_off_policy_agent(env, agent, num_episodes, replay_buffer, minimal_size
     return return_list
 
 
-def compute_advantage(gamma, lmbda, td_delta):
+def compute_advantage(discount, lmbda, td_delta):
     td_delta = td_delta.detach().numpy()
     advantage_list = []
     advantage = 0.0
     for delta in td_delta[::-1]:
-        advantage = gamma * lmbda * advantage + delta
+        advantage = discount * lmbda * advantage + delta
         advantage_list.append(advantage)
     advantage_list.reverse()
     return torch.tensor(advantage_list, dtype=torch.float)

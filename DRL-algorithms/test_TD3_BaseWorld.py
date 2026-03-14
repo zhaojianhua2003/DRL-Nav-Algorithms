@@ -6,7 +6,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from base_env import GazeboEnv # Change the env 
-from test_TD3_BaseWorld import evaluate
+from rl_utils import evaluate
 
 class Actor(nn.Module):
     def __init__(self, state_dim, action_dim):
@@ -60,9 +60,9 @@ state_dim = environment_dim + robot_dim
 action_dim = 2
 
 # Create the network
-network = TD3(state_dim, action_dim)
+agent = TD3(state_dim, action_dim)
 try:
-    network.load(file_name, "./pytorch_models")
+    agent.load(file_name, "./pytorch_models")
 except:
     raise ValueError("Could not load the stored model parameters")
 
@@ -73,4 +73,4 @@ state = env.reset()
 # Begin the testing loop
 
 for i in range(10):
-    evaluate(network,i,10)  # Evaluate the loaded policy
+    evaluate(env,agent,i)  # Evaluate the loaded policy
