@@ -24,10 +24,8 @@ TIME_DELTA = 0.1
 #define the launchfile for the environment
 launchfile = "base_world_scenario.launch"
 #change get_reward in the class GazeboEnv
-#change check_pos to adapt to new environment
 
-
-
+# change check_pos to adapt to new environment
 # Check if the random goal position is located on an obstacle and do not accept it if it is
 def check_pos(x, y):
     goal_ok = True
@@ -79,7 +77,7 @@ class GazeboEnv:
         self.goal_x = 1
         self.goal_y = 0.0
 
-        self.upper = 5.0
+        self.upper = 5.0      
         self.lower = -5.0
         self.velodyne_data = np.ones(self.environment_dim) * 10
         self.last_odom = None
@@ -183,6 +181,8 @@ class GazeboEnv:
             self.pause()
         except (rospy.ServiceException) as e:
             print("/gazebo/pause_physics service call failed")
+
+        #数据不同步，可以使用msg.stamp匹配最接近的雷达和里程计数据，或者使用message_filters
 
         # read velodyne laser state
         done, collision, min_laser = self.observe_collision(self.velodyne_data)

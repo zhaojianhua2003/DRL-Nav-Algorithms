@@ -305,7 +305,7 @@ while timestep < max_timesteps:
             print("Validating")
             timesteps_since_eval %= eval_freq
             evaluations.append(
-                evaluate(network=network, epoch=epoch, eval_episodes=eval_ep)
+                rl_utils.evaluate(network=network, epoch=epoch, eval_episodes=eval_ep)
             )
             network.save(file_name, directory="./pytorch_models")
             np.save("./results/%s" % (file_name), evaluations)
