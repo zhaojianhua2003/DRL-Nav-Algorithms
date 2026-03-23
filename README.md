@@ -21,7 +21,7 @@
     * **VPG** (Vanilla Policy Gradient)
     * **TRPO**
 * 新增 **Off-Policy** 算法：
-    ***SAC** (Soft Actor-Critic)。
+    ***SAC** (Soft Actor-Critic)（待更新）。
 
 
 2. **增强可视化 (Enhanced Visualization)**：
